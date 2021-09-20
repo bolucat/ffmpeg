@@ -1,0 +1,73 @@
+on:
+  push:
+    paths:
+      - '.github/workflows/ffmpeg.yml'
+    schedule:
+      - cron: '30 12 * * *'
+
+name: ffmpeg
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Setup variables
+        run: |
+          echo "FFMPEG=$(wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
+          echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Start build
+        run: |
+          # For uncompress xz format 
+          sudo apt-get install -y xz-utils
+          # Build windows 64 bit GPL
+          mkdir -p ffmpeg-windows
+          pushd ffmpeg-windows || exit 1
+          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ env.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.-gpl-[[:digit:]].[[:digit:]].zip" | wget -O ffmpeg-windows.zip -i -
+          unzip ffmpeg-windows.zip && rm -rfv ffmpeg-windows.zip
+          mv ffmpeg-*/bin/*.exe .
+          rm -rfv ffmpeg-*
+          zip -9 -r ffmpeg-windows.zip *.exe
+          popd || exit 1
+          # Build linux 64 bit GPL
+          mkdir -p ffmpeg-linux
+          pushd ffmpeg-linux || exit 1
+          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ env.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.-gpl-[[:digit:]].[[:digit:]].tar.xz" | wget -O ffmpeg-linux.tar.xz -i -
+          tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
+          mv ffmpeg-*/bin/* .
+          rm -rfv ffmpeg-*
+          zip -9 -r ffmpeg-linux.zip ff*
+          popd || exit 1
+          # Build macos 64 bit GPL
+          mkdir -p ffmpeg-macos
+          pushd ffmpeg-macos || exit 1
+          wget -O ffmpeg.zip https://evermeet.cx/ffmpeg/getrelease/zip
+          unzip ffmpeg.zip && rm -rfv ffmpeg.zip
+          wget -O ffprobe.zip https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
+          unzip ffprobe.zip && rm -rfv ffprobe.zip
+          wget -O ffplay.zip https://evermeet.cx/ffmpeg/getrelease/ffplay/zip
+          unzip ffplay.zip && rm -rfv ffplay.zip
+          zip -9 -r ffmpeg-macos.zip ff*
+          popd || exit 1
+          mkdir -p release
+          pushd release || exit 1
+          cp -r ../ffmpeg-windows/*.zip .
+          cp -r ../ffmpeg-linux/*.zip .
+          cp -r ../ffmpeg-macos/*.zip .
+          popd || exit 1
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: FFmpeg
+          tag_name: ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            ./release/*.zip
