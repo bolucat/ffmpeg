@@ -2,8 +2,8 @@ on:
   push:
     paths:
       - '.github/workflows/ffmpeg.yml'
-    schedule:
-      - cron: '30 12 * * *'
+  schedule:
+    - cron: '30 12 * * *'
 
 name: ffmpeg
 jobs:
