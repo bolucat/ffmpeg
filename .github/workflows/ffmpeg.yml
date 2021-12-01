@@ -19,6 +19,15 @@ jobs:
           echo "FFMPEG=$(wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
           echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
         shell: bash
+        
+      - name: Generate logs
+        run: |
+          echo "Update On $(date)" >> .github/update.log
+          # Git Commit
+          git config --local user.name "github-action[bot]"
+          git config --local user.email "${{ secrets.EMAIL }}"
+          git add .
+          git commit -am "Update On $(date)"
 
       - name: Start build
         run: |
