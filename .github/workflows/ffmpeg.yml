@@ -42,7 +42,7 @@ jobs:
           # Build windows 64 bit GPL
           mkdir -p ffmpeg-windows
           pushd ffmpeg-windows || exit 1
-          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ env.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.-gpl-[[:digit:]].[[:digit:]].zip" | wget -O ffmpeg-windows.zip -i -
+          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ env.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.-gpl-[[:digit:]].[[:digit:]].zip" | sort -r | head -1 | wget -O ffmpeg-windows.zip -i -
           unzip ffmpeg-windows.zip && rm -rfv ffmpeg-windows.zip
           mv ffmpeg-*/bin/*.exe .
           rm -rfv ffmpeg-*
@@ -51,7 +51,7 @@ jobs:
           # Build linux 64 bit GPL
           mkdir -p ffmpeg-linux
           pushd ffmpeg-linux || exit 1
-          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ env.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.-gpl-[[:digit:]].[[:digit:]].tar.xz" | wget -O ffmpeg-linux.tar.xz -i -
+          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ env.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.-gpl-[[:digit:]].[[:digit:]].tar.xz" | sort -r | head -1 | wget -O ffmpeg-linux.tar.xz -i -
           tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
           mv ffmpeg-*/bin/* .
           rm -rfv ffmpeg-*
