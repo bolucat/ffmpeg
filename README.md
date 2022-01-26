@@ -6,6 +6,6 @@
 
 |  🖥️ System   | 🚀 Link  |
 |  :----:  | :----:  |
-| Windows | [Link](https://neuq.de/ffmpeg-win) |
-| MacOS  | [Link](https://neuq.de/ffmpeg-mac) |
-| Linux | [Link](https://neuq.de/ffmpeg-linux) |
+| Windows | [Link](https://bit.ly/ffmpeg-windows64) |
+| MacOS  | [Link](https://bit.ly/ffmpeg-mac64) |
+| Linux | [Link](https://bit.ly/ffmpeg-linux64) |
