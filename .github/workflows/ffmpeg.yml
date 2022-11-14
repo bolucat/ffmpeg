@@ -76,15 +76,15 @@ jobs:
           popd || exit 1
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: FFmpeg
-          tag_name: ${{ env.VERSION }}
+          tag: ${{ env.VERSION }}
           draft: false
           prerelease: false
-          files: |
+          artifacts: |
             ./release/*.zip
             
       - name: Delete Older Release
