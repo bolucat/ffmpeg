@@ -9,11 +9,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup variables
         run: |
@@ -45,7 +45,7 @@ jobs:
           # Build windows 64 bit GPL
           mkdir -p ffmpeg-windows
           pushd ffmpeg-windows || exit 1
-          wget -qO- "https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/$FFMPEG" | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.-gpl-[[:digit:]].[[:digit:]].zip" | sort -r | head -1 | wget -O ffmpeg-windows.zip -i -
+          wget -qO- "https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/$FFMPEG" | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-n.*.win64-gpl-[[:digit:]].[[:digit:]].zip" | sort -r | head -1 | wget -O ffmpeg-windows.zip -i -
           unzip ffmpeg-windows.zip && rm -rfv ffmpeg-windows.zip
           mv ffmpeg-*/bin/*.exe .
           rm -rfv ffmpeg-*
